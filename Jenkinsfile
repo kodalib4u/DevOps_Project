@@ -5,12 +5,16 @@ pipeline
                label 'maven'
               }
        }
+   environment
+        {
+        PATH = "/opt/apache-maven-3.9.4/bin:$PATH"
+         }
    stages{
-      stage("Clone Repository")
+      stage("Build")
          {
            steps
              {
-               git branch: 'main', url: 'https://github.com/kodalib4u/DevOps_Project.git'
+               sh 'mvn clean deploy'
              }
          }
     }
