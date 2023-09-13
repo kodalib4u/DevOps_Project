@@ -1,9 +1,9 @@
-Pipeline
+pipeline
 {
    agent{
           node {
                label 'maven'
-              )
+              }
        }
    stages{
       stage("Clone Repository")
