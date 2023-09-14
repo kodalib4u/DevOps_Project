@@ -25,8 +25,12 @@ pipeline {
        
         stage("Quality Gate")
         {
+               environment {
+	            scannerHome = tool 'kodalib4u-sonarqube-scanner'
+                        }
             steps
             {
+             withSonarQubeEnv('sonarqube-server')
              script
              {
                timeout(time: 1, unit: 'HOURS') 
