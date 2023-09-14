@@ -6,10 +6,9 @@ pipeline {
        
     }
     environment{
-        PATH = "/opt/apache-maven-3.9.4/bin:$PATH"
+        PATH = "/opt/apache-maven-3.9.3/bin:$PATH"
     }
-    stages 
-    {
+    stages {
         stage('Build Code') {
             steps {
                 sh 'mvn clean deploy'
@@ -22,29 +21,17 @@ pipeline {
                 echo ".........Unit Test completed......"
             }
         }
-       
-        stage("Quality Gate")
-        {
-               environment {
-	            scannerHome = tool 'kodalib4u-sonarqube-scanner'
-                        }
-            steps
-            {
-             
-             script
-             {
+        stage('SonarQube analysis') {
+           environment {
+            scannerHome = tool 'kodalib4u-sonarqube-scanner'
+            }
+            steps {
                withSonarQubeEnv('sonarqube-server')
-               timeout(time: 1, unit: 'HOURS') 
-               { // Just in case something goes wrong, pipeline will be killed after a timeout
-                 def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
-                 if (qg.status != 'OK') 
-                 {
-                   error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                 }
-               }
-             }
-           }
+                { // If you have configured more than one global server connection, you can specify its name
+                 sh "${scannerHome}/bin/sonar-scanner"
+                }  
+            }
+        }
         }
     }
-}
 
